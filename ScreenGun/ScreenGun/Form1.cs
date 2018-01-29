@@ -22,9 +22,11 @@ namespace ScreenGun
         public static int SetValueY;
         public static int SetValueWidth;
         public static int SetValueHeight;
+        public static string fileName;
+        public static int counter = 0;
         GlobalKeyboardHook gHook;
 
-        
+
         private void Form1_Load(object sender, EventArgs e)
         {
             gHook = new GlobalKeyboardHook();
@@ -40,25 +42,27 @@ namespace ScreenGun
             textBox1.Text = ((char)e.KeyValue).ToString();
             if (textBox1.Text == "C")
             {
+
                 capture_Screen();
+ 
             }
         }
-        public void SetValue(int LeftX, int TopY,int RightX,int BottomY)
+        public void SetValue(int LeftX, int TopY, int RightX, int BottomY)
         {
             SetValueX = LeftX;
             SetValueY = TopY;
             SetValueHeight = BottomY - TopY;
             SetValueWidth = RightX - LeftX;
 
-            label1.Text = "(" + LeftX.ToString() + "," + TopY.ToString() + ") "+
+            label1.Text = "(" + LeftX.ToString() + "," + TopY.ToString() + ") " +
                 "(" + RightX.ToString() + "," + BottomY.ToString() + ")";
-            label2.Text = SetValueHeight.ToString()+","+SetValueWidth.ToString();
+            label2.Text = SetValueHeight.ToString() + "," + SetValueWidth.ToString();
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(F2 ==null)
+            if (F2 == null)
             {
                 F2 = new Form2(this);
                 F2.Owner = this;
@@ -88,9 +92,12 @@ namespace ScreenGun
             bmp.SetResolution(SetValueWidth, SetValueHeight);
             this.pictureBox1.Image = bmp;
 
+            counter += 1;
+            
+
             if (bmp != null)
             {
-                bmp.Save("c:\\myBitmap.jpg");
+                bmp.Save("c:\\Users\\LINYUNBAO\\Desktop\\Python\\Page" +counter+".jpg"); 
 
             }
         }

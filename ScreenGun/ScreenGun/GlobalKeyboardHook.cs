@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace ScreenGun
 {
@@ -80,14 +81,18 @@ namespace ScreenGun
         }
         #endregion
 
+        private static keyboardHookProc callbackDelegate;
         #region Public Methods
         /// <summary>
         /// Installs the global hook
         /// </summary>
         public void hook()
         {
+            if (callbackDelegate != null) throw new InvalidOperationException("Can't hook more than once");
             IntPtr hInstance = LoadLibrary("User32");
-            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, hInstance, 0);
+            callbackDelegate = new keyboardHookProc(hookProc);
+            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, callbackDelegate, hInstance, 0);
+            if (hhook == IntPtr.Zero) throw new Win32Exception();
         }
 
         /// <summary>
@@ -95,7 +100,10 @@ namespace ScreenGun
         /// </summary>
         public void unhook()
         {
-            UnhookWindowsHookEx(hhook);
+            if (callbackDelegate == null) return;
+            bool ok = UnhookWindowsHookEx(hhook);
+            if (!ok) throw new Win32Exception();
+            callbackDelegate = null;
         }
 
         /// <summary>
