@@ -22,13 +22,29 @@ namespace ScreenGun
         public static int SetValueY;
         public static int SetValueWidth;
         public static int SetValueHeight;
+        GlobalKeyboardHook gHook;
 
         
         private void Form1_Load(object sender, EventArgs e)
         {
+            gHook = new GlobalKeyboardHook();
+            gHook.unhook();
+            gHook.KeyDown += new KeyEventHandler(gHook_KeyDown);
+            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+                gHook.HookedKeys.Add(key);
 
         }
-        public void SetValue(int LeftX, int TopY,int RightX,int BottomY) {
+
+        public void gHook_KeyDown(object sender, KeyEventArgs e)
+        {
+            textBox1.Text = ((char)e.KeyValue).ToString();
+            if (textBox1.Text == "C")
+            {
+                capture_Screen();
+            }
+        }
+        public void SetValue(int LeftX, int TopY,int RightX,int BottomY)
+        {
             SetValueX = LeftX;
             SetValueY = TopY;
             SetValueHeight = BottomY - TopY;
@@ -54,25 +70,44 @@ namespace ScreenGun
 
         private void button2_Click(object sender, EventArgs e)
         {
+            capture_Screen();
+
+        }
+
+        private void capture_Screen()
+        {
             Bitmap bmp = new Bitmap(SetValueWidth, SetValueHeight);
             Graphics graphics = Graphics.FromImage(bmp);
             graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            graphics.CopyFromScreen(new Point(SetValueX,SetValueY),new Point(0, 0),new Size(SetValueWidth, SetValueHeight));
+            graphics.CopyFromScreen(new Point(SetValueX, SetValueY), new Point(0, 0), new Size(SetValueWidth, SetValueHeight));
             IntPtr intPtr = graphics.GetHdc();
             graphics.ReleaseHdc(intPtr);
-            
+
             bmp.SetResolution(SetValueWidth, SetValueHeight);
             this.pictureBox1.Image = bmp;
 
             if (bmp != null)
             {
                 bmp.Save("c:\\myBitmap.jpg");
-               
+
             }
-            
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            gHook.hook();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            gHook.unhook();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            gHook.unhook();
+        }
     }
 }
