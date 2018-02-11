@@ -89,7 +89,7 @@ namespace ScreenGun
             IntPtr intPtr = graphics.GetHdc();
             graphics.ReleaseHdc(intPtr);
 
-            bmp.SetResolution(SetValueWidth, SetValueHeight);
+            bmp.SetResolution(95, 95);
             this.pictureBox1.Image = bmp;
 
             counter += 1;
@@ -97,7 +97,7 @@ namespace ScreenGun
 
             if (bmp != null)
             {
-                bmp.Save("c:\\Users\\LINYUNBAO\\Desktop\\Python\\Page" +counter+".jpg"); 
+                bmp.Save("c:\\Users\\LINYUNBAO\\Desktop\\Page" +counter+".jpg"); 
 
             }
         }
